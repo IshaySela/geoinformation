@@ -33,7 +33,7 @@ app.MapGet("/pois/all", async (PoiDbContext dbContext) =>
     return response;
 });
 
-app.MapPost("/poi/new", async (
+app.MapPost("/pois/new", async (
     PoiDbContext dbContext,
     [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] CreateNewPoiRequest req) =>
 {
@@ -49,6 +49,7 @@ app.MapPost("/poi/new", async (
     };
 
     await dbContext.Pois.AddAsync(created);
+    await dbContext.SaveChangesAsync();
 });
 
 app.UseHttpsRedirection();
