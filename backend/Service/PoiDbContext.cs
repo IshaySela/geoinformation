@@ -3,11 +3,10 @@ namespace GeoInformation.Service
 {
     using GeoInformation.Models;
     using Microsoft.EntityFrameworkCore;
-    using MongoDB.EntityFrameworkCore.Extensions;
 
     public class PoiDbContext : DbContext
     {
-        public const string POI_COLLECTION_NAME = "pois";
+        public const string POI_TABLE_NAME = "pois";
 
         public PoiDbContext(DbContextOptions<PoiDbContext> options)
             : base(options)
@@ -18,9 +17,22 @@ namespace GeoInformation.Service
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<POI>().ToCollection(POI_COLLECTION_NAME);
+            modelBuilder.Entity<POI>()
+                .ToTable(POI_TABLE_NAME);
+            
+            modelBuilder.Entity<POI>(entity =>
+                {
+                    entity.Property(p => p.Id).HasColumnName("id");
+                    entity.HasKey(p => p.Id);
+                    entity.Property(p => p.Name).IsRequired();
+                    entity.Property(p => p.Description);
+                    entity.Property(p => p.Latitude).IsRequired();
+                    entity.Property(p => p.Longitude).IsRequired();
+                    entity.Property(p => p.Category).IsRequired();
+                });
+
         }
 
-        public DbSet<POI> Pois { get; set; } = null!;
+        public DbSet<POI> Pois { get; set; }
     }
 }
