@@ -1,6 +1,7 @@
 using GeoInformation.Service;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using GeoInformation.Dto;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,7 +21,13 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/pois", async (PoiDbContext dbContext) =>
+{
+    var pois = await dbContext.Pois.ToListAsync();
+    var response = pois.Select(p => new PoiDto(p.Id, p.Category, p.Name, p.Description, p.Latitude, p.Longitude));
+
+    return response;
+});
 
 app.UseHttpsRedirection();
 
