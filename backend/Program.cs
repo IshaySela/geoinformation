@@ -1,6 +1,5 @@
 using GeoInformation.Service;
 using Microsoft.EntityFrameworkCore;
-using GeoInformation.Dto;
 using GeoInformation.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -58,6 +57,8 @@ app.MapDelete("/pois/delete", async ([FromQuery(Name = "id")] string id, PoiDbCo
     toDelete.State = EntityState.Deleted;
     await dbContext.SaveChangesAsync();
 });
+
+
 
 app.UseHttpsRedirection();
 
