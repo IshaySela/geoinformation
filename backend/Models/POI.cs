@@ -4,13 +4,12 @@ namespace GeoInformation.Models
     public record POI
     {
         public required string Id { get; init; }
-        public required string Name { get; init; }
-        public required string Description { get; init; }
-        public required string Category { get; init; }
-        public required double Latitude { get; init; }
-        public required double Longitude { get; init; }
-        public required DateTime CreationTime { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public string Description { get; init; }  = string.Empty;
+        public string Category { get; init; } = string.Empty;
+        public double Latitude { get; init; }
+        public double Longitude { get; init; }
+        public DateTime CreationTime { get; init; }
 
-        public static POI CreateStubWithId(string id) => new POI() { Id = id, Category = "", CreationTime = DateTime.UnixEpoch, Description = "", Latitude = 0, Longitude = 0, Name = "" };
     }
 }

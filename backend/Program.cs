@@ -51,11 +51,19 @@ app.MapPost("/pois/new", async (
     await dbContext.SaveChangesAsync();
 });
 
+
 app.MapDelete("/pois/delete", async ([FromQuery(Name = "id")] string id, PoiDbContext dbContext) =>
 {
-    var toDelete = dbContext.Pois.Attach(POI.CreateStubWithId(id));
+    var toDelete = dbContext.Pois.Attach(new POI() { Id = id });
     toDelete.State = EntityState.Deleted;
     await dbContext.SaveChangesAsync();
+});
+
+
+app.MapPut("/pois/update", (
+    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)]
+    UpdatePoiRequest req, PoiDbContext dbContext) =>
+{
 });
 
 
