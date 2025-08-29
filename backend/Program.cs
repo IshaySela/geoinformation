@@ -60,10 +60,23 @@ app.MapDelete("/pois/delete", async ([FromQuery(Name = "id")] string id, PoiDbCo
 });
 
 
-app.MapPut("/pois/update", (
+app.MapPut("/pois/update", async (
+    [FromQuery(Name = "id")] string id,
     [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)]
     UpdatePoiRequest req, PoiDbContext dbContext) =>
 {
+    var updated = new POI()
+    {
+        Name = req.Name,
+        Id = id,
+        Category = req.Category,
+        Description = req.Description,
+        Latitude = req.Latitude,
+        Longitude = req.Longitude
+    };
+
+    dbContext.Update(updated);
+    await dbContext.SaveChangesAsync();
 });
 
 
