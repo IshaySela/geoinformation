@@ -4,25 +4,51 @@ using GeoInformation.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using GeoInformation.Models;
+using Microsoft.AspNetCore.Diagnostics;
+using System.Text.Json;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<PoiDbContext>(builder =>
     {
         builder.UseSqlite("Data Source=app.db");
     });
 
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseExceptionHandler(errorApp =>
 {
-    app.MapOpenApi();
-}
+    errorApp.Run(async context =>
+    {
+        var feature = context.Features.Get<IExceptionHandlerFeature>();
+        if (feature == null)
+            return;
+
+        var exception = feature.Error;
+        IResult result;
+
+        switch (exception)
+        {
+            case BadHttpRequestException:
+                result = Results.Problem(
+                    title: "Error while parsing json body",
+                    statusCode: StatusCodes.Status400BadRequest
+                    );
+                break;
+            default:
+                result = Results.Problem(
+                    title: "Internal server error");
+                break;
+        }
+
+        await result.ExecuteAsync(context);
+        return;
+    });
+});
 
 app.MapGet("/pois/all", async (PoiDbContext dbContext) =>
 {
