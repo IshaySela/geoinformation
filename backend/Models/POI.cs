@@ -10,5 +10,7 @@ namespace GeoInformation.Models
         public required double Latitude { get; init; }
         public required double Longitude { get; init; }
         public required DateTime CreationTime { get; init; }
+
+        public static POI CreateStubWithId(string id) => new POI() { Id = id, Category = "", CreationTime = DateTime.UnixEpoch, Description = "", Latitude = 0, Longitude = 0, Name = "" };
     }
 }
