@@ -49,8 +49,16 @@ public static class PoisEndpoints
     {
         var toDelete = dbContext.Pois.Attach(new POI() { Id = id });
         toDelete.State = EntityState.Deleted;
-        await dbContext.SaveChangesAsync();
 
+        try
+        {
+            await dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException) // Operation failed, affected 0 rows instead of 1
+        {
+            return Results.NotFound();
+        }
+        
         return Results.Ok();
     }
 

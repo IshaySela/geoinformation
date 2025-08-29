@@ -1,9 +1,6 @@
 using GeoInformation.Service;
 using Microsoft.EntityFrameworkCore;
 using GeoInformation.Api;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using GeoInformation.Models;
 using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,9 +11,16 @@ builder.Services.AddDbContext<PoiDbContext>(builder =>
         builder.UseSqlite("Data Source=app.db");
     });
 
+builder.Services.AddOpenApi();
+
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
 
 app.UseExceptionHandler(errorApp =>
 {
@@ -51,7 +55,6 @@ app.UseExceptionHandler(errorApp =>
 
 app.MapGroup("/pois")
     .MapPoisEndpoints();
-
 
 app.UseHttpsRedirection();
 
