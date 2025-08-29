@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using GeoInformation.Api;
 using Microsoft.AspNetCore.Diagnostics;
 
+const string corsPolicyName = "_poisBackendPolicy";
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -14,6 +16,16 @@ builder.Services.AddDbContext<PoiDbContext>(builder =>
 builder.Services.AddOpenApi();
 
 builder.Services.AddProblemDetails();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicyName, policy =>
+    {
+        if (builder.Environment.IsProduction())
+            policy.AllowAnyHeader();
+
+    });
+});
 
 var app = builder.Build();
 
@@ -52,6 +64,7 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
+app.UseCors(corsPolicyName);
 
 app.MapGroup("/pois")
     .MapPoisEndpoints();

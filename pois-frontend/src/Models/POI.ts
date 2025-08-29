@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-const POIValidator = z.object({
+export const POISchema = z.object({
     id: z.string(),
     category: z.string(),
     name: z.string(),
@@ -9,4 +9,4 @@ const POIValidator = z.object({
     longitude: z.number()
 })
 
-export type POI = z.infer<typeof POIValidator>;
+export type POI = z.infer<typeof POISchema>;
