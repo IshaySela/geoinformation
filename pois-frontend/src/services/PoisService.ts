@@ -9,6 +9,8 @@ export async function getAllPois(): Promise<GetAllPoisResponse> {
     const result = await fetch('/pois/all')
     let pois: GetAllPoisResponse = []
     let asJson: unknown
+
+    
     try {
         asJson = await result.json()
     } catch (error) {

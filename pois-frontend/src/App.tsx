@@ -3,6 +3,7 @@ import './App.css'
 import { PoisMap } from './components/PoisMap'
 import type { POI } from './Models/POI'
 import { getAllPois } from './services/PoisService'
+import 'leaflet/dist/leaflet.css';
 
 function App() {
   const [pois, setPois] = useState<POI[]>([])
@@ -11,9 +12,7 @@ function App() {
     getAllPois().then(ps => setPois(ps));
   }, [])
 
-  return <div className="bg-amber-950">
-    <PoisMap pois={pois}/>
-  </div>
+  return  <PoisMap pois={pois}/>
 }
 
 export default App
