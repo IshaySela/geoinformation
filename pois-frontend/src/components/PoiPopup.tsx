@@ -48,7 +48,6 @@ export default function PoiMarker({ point, onDelete, onUpdate }: PopiMarkerProps
                         <h1>{point.name}</h1>
                         <h2>{point.category}</h2>
                         <p>{point.description}</p>
-
                     </>
             }
 
