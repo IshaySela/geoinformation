@@ -42,7 +42,8 @@ public static class PoisEndpoints
 
         await dbContext.Pois.AddAsync(created);
         await dbContext.SaveChangesAsync();
-        return Results.Ok();
+        
+        return TypedResults.Ok(new CreateNewPoiResponse(created.Id));
     }
 
     internal static async Task<IResult> DeletePoi([FromQuery(Name = "id")] string id, PoiDbContext dbContext)
