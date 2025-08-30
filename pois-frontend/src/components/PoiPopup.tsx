@@ -12,8 +12,8 @@ export type PopiMarkerProps = {
 export default function PoiMarker({ point, onDelete, onUpdate }: PopiMarkerProps) {
     const [editable, setEditable] = useState(false)
     const [pointCopy, setPointCopy] = useState(structuredClone(point))
-    
-    const onCommitChanges =  () => {
+
+    const onCommitChanges = () => {
         onUpdate(pointCopy)
         setEditable(false)
     }
@@ -40,14 +40,15 @@ export default function PoiMarker({ point, onDelete, onUpdate }: PopiMarkerProps
             {
                 editable ?
                     <>
-                        <input onChange={ev => setPointCopy({ ...pointCopy, name: ev.target.value })
-                        } value={pointCopy.name}></input>
-
+                        <input onChange={ev => setPointCopy({ ...pointCopy, name: ev.target.value })} value={pointCopy.name}></input>
+                        <input onChange={ev => setPointCopy({ ...pointCopy, category: ev.target.value })} value={pointCopy.category} />
                         <textarea onChange={ev => setPointCopy({ ...pointCopy, description: ev.target.value })} rows={5} cols={40} value={pointCopy.description}></textarea>
                     </> :
                     <>
                         <h1>{point.name}</h1>
+                        <h2>{point.category}</h2>
                         <p>{point.description}</p>
+
                     </>
             }
 
