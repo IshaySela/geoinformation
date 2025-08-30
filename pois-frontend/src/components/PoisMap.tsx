@@ -3,7 +3,7 @@ import type { POI } from "../Models/POI";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvent } from 'react-leaflet';
 import PoiMarker, { type PopiMarkerProps } from "./PoiPopup";
 import CreateNewPoiForm from "./CreateNewPoiForm";
-import L, { marker } from 'leaflet'
+import L from 'leaflet'
 
 export type PoisMapProps = {
     pois: POI[],
@@ -68,12 +68,6 @@ function CreateNewPoiPopup({ onSubmit }: { onSubmit: (poi: POI) => void }) {
 
     const markerRef = useRef<L.Marker>(null);
 
-    const onCreateNewPoiSubmit = (poi: POI) => {
-        setState({ ...state })
-        onSubmit(poi)
-    }
-
-
     useMapEvent('click', ev => {
         const { lat, lng } = ev.latlng
         setState({ lat: lat, lng: lng })
@@ -84,7 +78,7 @@ function CreateNewPoiPopup({ onSubmit }: { onSubmit: (poi: POI) => void }) {
         {
             <Marker ref={markerRef} position={[state.lat, state.lng]} autoPan={false}>
                 <Popup maxWidth={200} >
-                    <CreateNewPoiForm latitude={state.lat} longitude={state.lng} onSubmit={onCreateNewPoiSubmit} />
+                    <CreateNewPoiForm latitude={state.lat} longitude={state.lng} onSubmit={onSubmit} />
                 </Popup>
             </Marker>
         }
