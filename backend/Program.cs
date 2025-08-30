@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using GeoInformation.Api;
 using Microsoft.AspNetCore.Diagnostics;
 
-const string corsPolicyName = "_poisBackendPolicy";
+const string corsPolicyName = "_poisAllowServe";
 
 var builder = WebApplication.CreateBuilder(args);
 
