@@ -78,7 +78,10 @@ function CreateNewPoiPopup({ onSubmit }: { onSubmit: (poi: POI) => void }) {
     return (
         <Marker ref={markerRef} position={[state.lat, state.lng]} opacity={state.show ? 100 : 0}>
             <Popup maxWidth={200}>
-                <CreateNewPoiForm latitude={state.lat} longitude={state.lng} onSubmit={onSubmit} />
+                <CreateNewPoiForm latitude={state.lat} longitude={state.lng} onSubmit={p => {
+                    console.log(p)
+                    onSubmit(p)
+                }} />
             </Popup>
         </Marker>
     )

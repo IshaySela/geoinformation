@@ -5,6 +5,8 @@ import { createNewPoi, getAllPois, deletePoi, updatePoi } from './services/PoisS
 import 'leaflet/dist/leaflet.css';
 import 'react-data-grid/lib/styles.css';
 import { PoisTabularView } from './components/PoisTabularView';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [pois, setPois] = useState<POI[]>([])
@@ -28,6 +30,11 @@ function App() {
         copy.splice(index, 1)
         setPois(copy)
       }
+
+      toast.success('POI deleted successfully')
+    }).catch(err => {
+      console.error(`Error while deleting POI ${id}`, err)
+      toast.error('Error occured while trying to delete POI...')
     })
   }
 
@@ -76,7 +83,10 @@ function App() {
           : <></>
       }
     </div>
+
+    <ToastContainer />
   </>
+
 }
 
 export default App
