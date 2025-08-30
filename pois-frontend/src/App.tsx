@@ -5,6 +5,7 @@ import { createNewPoi, getAllPois, deletePoi, updatePoi } from './services/PoisS
 import 'leaflet/dist/leaflet.css';
 import 'react-data-grid/lib/styles.css';
 import { PoisTabularView } from './components/PoisTabularView';
+import CheveronUp from './assets/chevron-up-double.svg'
 
 function App() {
   const [pois, setPois] = useState<POI[]>([])
@@ -51,6 +52,8 @@ function App() {
 
   const mapRef = useRef<PoisMapHandle>(null)
 
+  const [open, setOpen] = useState(false)
+
   return <>
     <div className='h-screen z-0'>
       <PoisMap
@@ -62,10 +65,17 @@ function App() {
       />
     </div>
 
-    <div className='fixed h-1/4 bottom-0 left-0 z-[400] w-full'>
-      <PoisTabularView
-        focusDblClicked={(lat, lng) => mapRef.current?.focus(lat, lng)}
-        pois={pois} />
+    <div className="fixed bottom-0 left-0 w-full z-[9999] shadow-lg flex flex-col max-h-1/4">
+      <button className='justify-center' onClick={_ => setOpen(!open)}>
+        { open ? 'Close Tabular View' : 'Open Tabular View' }
+      </button>
+      {
+        open ?
+          <PoisTabularView
+            focusDblClicked={(lat, lng) => mapRef.current?.focus(lat, lng)}
+            pois={pois} />
+          : <></>
+      }
     </div>
   </>
 }
