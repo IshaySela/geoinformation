@@ -63,13 +63,17 @@ function App() {
     });
   }, [])
 
+  const TEL_AVIV_LATLNG: [number, number] = [32.0853, 34.7818]
   const mapRef = useRef<PoisMapHandle>(null)
-
   const [open, setOpen] = useState(false)
 
   return <>
     <div className='h-screen z-0'>
       <PoisMap
+        onGeoLocationFound={() => {
+          toast.success('Located geolocation')
+        }}
+        initialLocation={{ geolocation: true, defaultLatLong: TEL_AVIV_LATLNG }}
         ref={mapRef}
         pois={pois}
         onNewMarker={onCreateNewPoi}

@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useRef, useState } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import type { POI } from "../Models/POI";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvent } from 'react-leaflet';
 import PoiMarker, { type PopiMarkerProps } from "./PoiPopup";
@@ -7,17 +7,36 @@ import L from 'leaflet'
 
 export type PoisMapProps = {
     pois: POI[],
+    initialLocation: {
+        geolocation: boolean,
+        defaultLatLong: [number, number]
+    }
     onNewMarker: (p: POI) => void
     onMarkerDelete: PopiMarkerProps['onDelete']
     onMarkerUpdate: PopiMarkerProps['onUpdate']
+    onGeoLocationFound?: (lat: number, lng: number) => void
 }
 
 export type PoisMapHandle = {
     focus(lat: number, lng: number): void
 }
 
-export const PoisMap = React.forwardRef<PoisMapHandle, PoisMapProps>(({ pois, onNewMarker, onMarkerDelete, onMarkerUpdate }: PoisMapProps, ref) => {
+export const PoisMap = React.forwardRef<PoisMapHandle, PoisMapProps>(({ pois, onNewMarker, onMarkerDelete, onMarkerUpdate, initialLocation, onGeoLocationFound }: PoisMapProps, ref) => {
     const mapRef = useRef<L.Map>(null)
+
+
+    const findGeoLocation = () => {
+        if (initialLocation.geolocation && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                mapRef.current?.flyTo([pos.coords.latitude, pos.coords.longitude], mapRef.current.getZoom())
+                if (onGeoLocationFound)
+                    onGeoLocationFound(pos.coords.latitude, pos.coords.longitude)
+            })
+        }
+    }
+    useEffect(() => {
+        findGeoLocation()
+    }, [])
 
     useImperativeHandle(ref, () => {
         return {
@@ -30,7 +49,7 @@ export const PoisMap = React.forwardRef<PoisMapHandle, PoisMapProps>(({ pois, on
 
     return <>
         <MapContainer
-            center={[32.0853, 34.7818]} // Tel Aviv
+            center={initialLocation.defaultLatLong}
             zoom={13}
             style={{ height: "100%", width: "100%" }}
             ref={mapRef}>

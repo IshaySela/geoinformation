@@ -26,14 +26,12 @@ export function PoisTabularView({ pois, focusClicked, onDeleteClicked, onUpdateC
         { key: 'latitude', name: 'Latitude' },
         {
             key: 'Actions', name: 'Actions', renderCell: c => {
-                const focusClick = () => focusClicked(c.row.latitude, c.row.longitude)
                 const deleteClick = () => onDeleteClicked(c.row.id)
                 const updateClick = () => {
                     setEditState({ poi: c.row, editing: true })
                 }
 
                 return <div className="flex justify-between px-1.5">
-                    <span role="img" aria-label="pin" onClick={focusClick}>📌</span>
                     <span role="img" aria-label="delete" onClick={deleteClick}>❌</span>
                     <span role="img" aria-label="update" onClick={updateClick}>✏️</span>
                 </div>
@@ -44,6 +42,7 @@ export function PoisTabularView({ pois, focusClicked, onDeleteClicked, onUpdateC
     return <>
         <DataGrid
             rows={pois}
+            onCellDoubleClick={c => focusClicked(c.row.latitude, c.row.longitude)}
             defaultColumnOptions={{
                 resizable: true,
                 sortable: true
