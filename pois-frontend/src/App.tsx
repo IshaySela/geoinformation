@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { PoisMap } from './components/PoisMap'
 import type { POI } from './Models/POI'
-import { createNewPoi, getAllPois, deletePoi } from './services/PoisService'
+import { createNewPoi, getAllPois, deletePoi, updatePoi } from './services/PoisService'
 import 'leaflet/dist/leaflet.css';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
 
   const onCreateNewPoi = (p: POI) => {
     createNewPoi(p).then(_ => {
-      setPois(pois)
+      setPois([...pois, p])
     }).catch(_ => {
       // display error notification
     })
@@ -17,20 +17,40 @@ function App() {
 
   const onPoiDelete = (id: string) => {
     deletePoi(id).then(_ => {
-      setPois(pois)
+      const index = pois.findIndex(p => p.id == id)
+
+      if (index != -1) {
+        const copy = [...pois]
+        copy.splice(index, 1)
+        setPois(copy)
+      }
+
+    })
+  }
+
+  const onMarkerUpdate = (updated: POI) => {
+    updatePoi(updated).then(_ => {
+      const copy = [...pois]
+      const index = copy.findIndex(p => p.id === updated.id)
+
+      if (index !== -1) {
+        copy[index] = updated
+        setPois(copy)
+      }
     })
   }
 
   useEffect(() => {
     getAllPois().then(ps => setPois(ps));
-  }, [pois])
+  }, [])
 
   return <>
     <div style={{ height: '100vh' }}>
       <PoisMap
         pois={pois}
-        createNewPoi={onCreateNewPoi}
-        onDelete={onPoiDelete}
+        onNewMarker={onCreateNewPoi}
+        onMarkerDelete={onPoiDelete}
+        onMarkerUpdate={onMarkerUpdate}
       />
     </div></>
 }

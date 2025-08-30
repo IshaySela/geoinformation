@@ -1,18 +1,19 @@
 import { useRef, useState, type JSX } from "react";
 import type { POI } from "../Models/POI";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvent } from 'react-leaflet';
-import PoiPopup, { type PoiPopupProps } from "./PoiPopup";
+import PoiMarker, { type PopiMarkerProps } from "./PoiPopup";
 import CreateNewPoiForm from "./CreateNewPoiForm";
 import L from 'leaflet'
 
 export type PoisMapProps = {
     pois: POI[],
-    createNewPoi: (p: POI) => void
-    onDelete: PoiPopupProps['onDelete']
+    onNewMarker: (p: POI) => void
+    onMarkerDelete: PopiMarkerProps['onDelete']
+    onMarkerUpdate: PopiMarkerProps['onUpdate']
 }
 
 
-export function PoisMap({ pois, createNewPoi, onDelete }: PoisMapProps): JSX.Element {
+export function PoisMap({ pois, onNewMarker, onMarkerDelete, onMarkerUpdate }: PoisMapProps): JSX.Element {
 
     return <>
         <MapContainer
@@ -25,11 +26,16 @@ export function PoisMap({ pois, createNewPoi, onDelete }: PoisMapProps): JSX.Ele
             />
             {
                 pois.map(point =>
-                    <PoiPopup point={point} key={point.id} onDelete={onDelete} />
+                    <PoiMarker
+                        point={point}
+                        key={point.id}
+                        onDelete={onMarkerDelete}
+                        onUpdate={onMarkerUpdate}
+                    />
                 )
             }
 
-            <CreateNewPoiPopup onSubmit={createNewPoi} />
+            <CreateNewPoiPopup onSubmit={onNewMarker} />
         </MapContainer>
     </>
 }
@@ -54,12 +60,12 @@ function CreateNewPoiPopup({ onSubmit }: { onSubmit: (poi: POI) => void }) {
         markerRef.current?.openPopup([lat, lng])
     })
 
-    return <>
+    return (
         <Marker ref={markerRef} position={[state.lat, state.lng]} opacity={state.show ? 100 : 0}>
             <Popup maxWidth={200}>
                 <CreateNewPoiForm lat={state.lat} lng={state.lng} onSubmit={onSubmit} />
             </Popup>
         </Marker>
-    </>
+    )
 
 }

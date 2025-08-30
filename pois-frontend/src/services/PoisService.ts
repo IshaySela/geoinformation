@@ -64,3 +64,32 @@ export async function deletePoi(id: string): Promise<boolean> {
     // add notification, problem, etc.
     return false
 }
+
+export async function updatePoi(poi: POI): Promise<boolean> {
+    const updateBody: Omit<POI, "id"> = {
+        category: poi.category,
+        description: poi.description,
+        latitude: poi.latitude,
+        longitude: poi.longitude,
+        name: poi.name
+    }
+
+    let resp: Response
+
+    try {
+        resp = await fetch(`/pois/update?id=${poi.id}`, {
+            method: 'put',
+            body: JSON.stringify(updateBody),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+    } catch (error) {
+        // error occured
+        console.error('Error occured while updating POI ', poi.id, error)
+        return false
+    }
+
+    return resp.ok
+}

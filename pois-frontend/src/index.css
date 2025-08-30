@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 .popup {
   box-sizing: border-box;
   padding: 1rem 1.5rem;
@@ -30,3 +29,4 @@
     outline-offset: -1px;
   }
 }
+
