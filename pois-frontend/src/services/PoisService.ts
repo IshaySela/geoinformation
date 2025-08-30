@@ -7,7 +7,7 @@ const GetAllPoisSchema = z.array(POISchema)
 type GetAllPoisResponse = z.infer<typeof GetAllPoisSchema>
 
 type CreateNewPoi = Omit<POI, "id">
-export type CreateNewPoiResponse = { id: string } | undefined
+export type CreateNewPoiResponse = { id: string }
 
 export async function getAllPois(): Promise<GetAllPoisResponse> {
     const result = await fetch('/pois/all')
@@ -43,14 +43,14 @@ export async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiRespons
     })
 
     if (!result.ok)
-        return undefined;
+        throw Error('Error while creating new POI')
 
     const asJson = await result.json()
     const parseResult = CreateNewPoiResponseSchema.safeParse(asJson)
 
     if(!parseResult.success) {
         console.error('Recived unexpceted response from server', parseResult.error)
-        return undefined
+        throw Error('Recived unexpcted response from server')
     }
 
     return parseResult.data
