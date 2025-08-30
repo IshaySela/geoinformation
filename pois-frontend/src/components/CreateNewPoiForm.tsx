@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { POISchema, type POI } from "../Models/POI";
 import { Field, Form } from "@base-ui-components/react";
 import { toast } from "react-toastify";
@@ -21,21 +21,26 @@ export default function CreateNewPoiForm(props: CreateNewPoiFormProps): JSX.Elem
     const errorClass = "text-red-500 text-xs mt-1 h-10";
     const labelClass = "block text-sm font-medium mb-1 text-gray-700";
 
-
+    // The copy is done in order to not change the actual POI 
+    // when editing the form
     const [formState, setFormState] = useState<Partial<POI>>({ ...props })
+
+    // If the parent POI state change, update the form.
+    useEffect(() => {
+        setFormState(props)
+    }, [props])
 
     return <>
         <Form
             onSubmit={ev => {
                 ev.preventDefault()
-                const form = new FormData(ev.currentTarget)
                 formState.id = formState.id ? formState.id : ''; // allow for forms without id
 
                 const result = POISchema.safeParse(formState)
-                
+
                 if (result.success) {
                     props.onSubmit(result.data)
-                    form.forEach((_, key) => form.delete(key))
+                    // setFormState({ category: '', description: '', id: '', latitude: 0, longitude: 0, name: '' })
                 }
 
                 else {
@@ -75,7 +80,7 @@ export default function CreateNewPoiForm(props: CreateNewPoiFormProps): JSX.Elem
                     type="number"
                     required
                     className={inputClass}
-                    value={props.latitude}
+                    value={formState.latitude}
                     disabled
                 />
                 <Field.Error className={errorClass} />
@@ -86,7 +91,7 @@ export default function CreateNewPoiForm(props: CreateNewPoiFormProps): JSX.Elem
                 <Field.Control
                     type="number"
                     required
-                    value={props.longitude}
+                    value={formState.longitude}
                     disabled
                     className={inputClass}
                 />
