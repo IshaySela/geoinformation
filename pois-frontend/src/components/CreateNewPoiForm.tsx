@@ -40,12 +40,10 @@ export default function CreateNewPoiForm(props: CreateNewPoiFormProps): JSX.Elem
 
                 if (result.success) {
                     props.onSubmit(result.data)
-                    // setFormState({ category: '', description: '', id: '', latitude: 0, longitude: 0, name: '' })
                 }
 
                 else {
                     console.error('Error while parsing form data', formState, result)
-                    toast.error('Error while parsing form data')
                 }
             }}>
 

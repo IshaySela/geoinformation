@@ -63,30 +63,30 @@ export const PoisMap = React.forwardRef<PoisMapHandle, PoisMapProps>(({ pois, on
  */
 function CreateNewPoiPopup({ onSubmit }: { onSubmit: (poi: POI) => void }) {
     const [state, setState] = useState({
-        lat: 0, lng: 0, show: true
+        lat: 0, lng: 0
     })
 
     const markerRef = useRef<L.Marker>(null);
 
     const onCreateNewPoiSubmit = (poi: POI) => {
-        setState({ ...state, show: true })
+        setState({ ...state })
         onSubmit(poi)
     }
 
 
     useMapEvent('click', ev => {
         const { lat, lng } = ev.latlng
-        setState({ show: true, lat: lat, lng: lng })
+        setState({ lat: lat, lng: lng })
         markerRef.current?.openPopup([lat, lng])
     })
 
     return <>
         {
-            state.show ? <Marker ref={markerRef} position={[state.lat, state.lng]} autoPan={false}>
+            <Marker ref={markerRef} position={[state.lat, state.lng]} autoPan={false}>
                 <Popup maxWidth={200} >
                     <CreateNewPoiForm latitude={state.lat} longitude={state.lng} onSubmit={onCreateNewPoiSubmit} />
                 </Popup>
-            </Marker> : <></>
+            </Marker>
         }
     </>
 
