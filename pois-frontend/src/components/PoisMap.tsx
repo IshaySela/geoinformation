@@ -1,17 +1,18 @@
 import { useRef, useState, type JSX } from "react";
 import type { POI } from "../Models/POI";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvent } from 'react-leaflet';
-import PoiPopup from "./PoiPopup";
+import PoiPopup, { type PoiPopupProps } from "./PoiPopup";
 import CreateNewPoiForm from "./CreateNewPoiForm";
 import L from 'leaflet'
 
 export type PoisMapProps = {
     pois: POI[],
     createNewPoi: (p: POI) => void
+    onDelete: PoiPopupProps['onDelete']
 }
 
 
-export function PoisMap({ pois, createNewPoi }: PoisMapProps): JSX.Element {
+export function PoisMap({ pois, createNewPoi, onDelete }: PoisMapProps): JSX.Element {
 
     return <>
         <MapContainer
@@ -24,7 +25,7 @@ export function PoisMap({ pois, createNewPoi }: PoisMapProps): JSX.Element {
             />
             {
                 pois.map(point =>
-                    <PoiPopup point={point} key={point.id} />
+                    <PoiPopup point={point} key={point.id} onDelete={onDelete} />
                 )
             }
 

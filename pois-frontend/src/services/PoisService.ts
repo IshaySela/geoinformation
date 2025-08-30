@@ -45,3 +45,22 @@ export async function createNewPoi(p: CreateNewPoi): Promise<boolean> {
 
     return false;
 }
+
+export async function deletePoi(id: string): Promise<boolean> {
+    const prm = fetch(`/pois/delete?id=${id}`, {
+        method: 'delete'
+    })
+    let resp: Response | undefined = undefined
+
+    try {
+        resp = await prm
+    } catch (error) {
+        // handle error state
+    }
+
+    if (resp !== undefined && resp.status === 200)
+        return true
+
+    // add notification, problem, etc.
+    return false
+}
