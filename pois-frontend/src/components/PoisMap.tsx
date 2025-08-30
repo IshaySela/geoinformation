@@ -1,21 +1,17 @@
-import { useEffect, useRef, useState, type JSX } from "react";
+import { useRef, useState, type JSX } from "react";
 import type { POI } from "../Models/POI";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvent } from 'react-leaflet';
 import PoiPopup from "./PoiPopup";
-import { type LeafletMouseEvent, type Map as LeafletMap, Marker as LeafletMarker, marker } from "leaflet";
 import CreateNewPoiForm from "./CreateNewPoiForm";
 import L from 'leaflet'
 
 export type PoisMapProps = {
-    pois: POI[]
+    pois: POI[],
+    createNewPoi: (p: POI) => void
 }
 
 
-export function PoisMap({ pois }: PoisMapProps): JSX.Element {
-    const mapOnClick = (map: LeafletMap, ev: LeafletMouseEvent) => {
-        // const test = <CreateNewPoiForm lat={ev.latlng.lat} lng={ev.latlng.lng} onSubmit={p => { }} />
-    }
-
+export function PoisMap({ pois, createNewPoi }: PoisMapProps): JSX.Element {
 
     return <>
         <MapContainer
@@ -32,37 +28,37 @@ export function PoisMap({ pois }: PoisMapProps): JSX.Element {
                 )
             }
 
-            <CreatePopupOnClick onClick={mapOnClick} />
+            <CreateNewPoiPopup onSubmit={createNewPoi} />
         </MapContainer>
     </>
 }
 
 /**
- * Hooks to the maps 'click' event. This needs to be done in a component that is 
- * a child of <MapContainer>
- * @param onClick The callback to call, accepts LeafletMap object and the event details
- * @returns Stub component with no body
+ * The component CreateNewPoiPopup creates a Marker with a Popup that is updated
+ * to the cursor location every time the user clicks the map.
+ * The popup of the marker is the form for creating new POI.
+ * When the form is submitted, call the callback
  */
-function CreatePopupOnClick({ onClick }: { onClick: (map: LeafletMap, ev: LeafletMouseEvent) => void }) {
+function CreateNewPoiPopup({ onSubmit }: { onSubmit: (poi: POI) => void }) {
     const [state, setState] = useState({
         lat: 0, lng: 0, show: false
     })
 
     const markerRef = useRef<L.Marker>(null);
 
-    const map = useMapEvent('click', ev => {
+    useMapEvent('click', ev => {
         const { lat, lng } = ev.latlng
         setState({ show: true, lat: lat, lng: lng })
 
         markerRef.current?.openPopup([lat, lng])
-        onClick(map, ev)
     })
 
-    return <div>
+    return <>
         <Marker ref={markerRef} position={[state.lat, state.lng]} opacity={state.show ? 100 : 0}>
-            <Popup>
-                <CreateNewPoiForm lat={state.lat} lng={state.lng} onSubmit={_ => { }} />
+            <Popup maxWidth={200}>
+                <CreateNewPoiForm lat={state.lat} lng={state.lng} onSubmit={onSubmit} />
             </Popup>
         </Marker>
-    </div>
+    </>
+
 }

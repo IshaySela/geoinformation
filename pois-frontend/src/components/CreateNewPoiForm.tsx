@@ -15,8 +15,14 @@ export default function CreateNewPoiForm({ onSubmit, lat, lng }: CreateNewPoiFor
     const CATEGORY_FIELD = 'category'
     const LAT_FIELD = 'lat'
     const LNG_FIELD = 'lng'
+    const inputClass =
+        "border-b border-gray-400 focus:border-blue-500 focus:outline-none py-1 px-0";
+    const errorClass = "text-red-500 text-xs mt-1 h-10";
+    const labelClass = "block text-sm font-medium mb-1 text-gray-700";
 
-    return <div>
+
+
+    return <>
         <Form
             onSubmit={ev => {
                 ev.preventDefault()
@@ -34,36 +40,58 @@ export default function CreateNewPoiForm({ onSubmit, lat, lng }: CreateNewPoiFor
                     longitude: lng
                 }
                 const result = POISchema.safeParse(poi)
-                
-                if(result.success) {
+
+                if (result.success) {
                     onSubmit(result.data)
+                    form.forEach((_, key) => form.delete(key))
                 }
             }}>
+
+
             <Field.Root name={NAME_FIELD}>
-                <Field.Control type="text" required />
-                <Field.Error />
+                <Field.Label className={labelClass}>Name</Field.Label>
+                <Field.Control type="text" required className={inputClass} />
+                <Field.Error className={errorClass} />
             </Field.Root>
+
             <Field.Root name={DESCRIPTION_FIELD}>
-                <Field.Control type="text" required />
-                <Field.Error />
+                <Field.Label className={labelClass}>Description</Field.Label>
+                <Field.Control type="text" required className={inputClass} />
+                <Field.Error className={errorClass} />
             </Field.Root>
 
             <Field.Root name={CATEGORY_FIELD}>
-                <Field.Control type="text" required />
-                <Field.Error />
+                <Field.Label className={labelClass}>Category</Field.Label>
+                <Field.Control type="text" required className={inputClass} />
+                <Field.Error className={errorClass} />
             </Field.Root>
 
             <Field.Root name={LAT_FIELD}>
-                <Field.Control type="number" required pattern="^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$" />
-                <Field.Error />
+                <Field.Label className={labelClass}>Latitude</Field.Label>
+                <Field.Control
+                    type="number"
+                    required
+                    className={inputClass}
+                    value={lat}
+                    disabled
+                />
+                <Field.Error className={errorClass} />
             </Field.Root>
 
             <Field.Root name={LNG_FIELD}>
-                <Field.Control type="number" required pattern="^[-+]?((1[0-7]\d(\.\d+)?|180(\.0+)?|(\d{1,2}(\.\d+)?)))$" />
-                <Field.Error />
+                <Field.Label className={labelClass}>Longitude</Field.Label>
+                <Field.Control
+                    type="number"
+                    required
+                    value={lng}
+                    disabled
+                    className={inputClass}
+                />
+                <Field.Error className={errorClass} />
             </Field.Root>
 
-            <button type="submit"></button>
+            <button type="submit">Submit</button>
+            <button type="reset">Clear</button>
         </Form>
-    </div>
+    </>
 }
