@@ -1,11 +1,13 @@
 import z from "zod";
 import { POISchema, type POI } from "../Models/POI";
+import { CreateNewPoiResponseSchema } from "./Api";
 
 
 const GetAllPoisSchema = z.array(POISchema)
 type GetAllPoisResponse = z.infer<typeof GetAllPoisSchema>
 
 type CreateNewPoi = Omit<POI, "id">
+export type CreateNewPoiResponse = { id: string } | undefined
 
 export async function getAllPois(): Promise<GetAllPoisResponse> {
     const result = await fetch('/pois/all')
@@ -31,7 +33,7 @@ export async function getAllPois(): Promise<GetAllPoisResponse> {
     return pois
 }
 
-export async function createNewPoi(p: CreateNewPoi): Promise<boolean> {
+export async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiResponse> {
     const result = await fetch('/pois/new', {
         headers: {
             "Content-Type": 'application/json'
@@ -40,10 +42,18 @@ export async function createNewPoi(p: CreateNewPoi): Promise<boolean> {
         body: JSON.stringify(p)
     })
 
-    if (result.status === 200)
-        return true;
+    if (!result.ok)
+        return undefined;
 
-    return false;
+    const asJson = await result.json()
+    const parseResult = CreateNewPoiResponseSchema.safeParse(asJson)
+
+    if(!parseResult.success) {
+        console.error('Recived unexpceted response from server', parseResult.error)
+        return undefined
+    }
+
+    return parseResult.data
 }
 
 export async function deletePoi(id: string): Promise<boolean> {

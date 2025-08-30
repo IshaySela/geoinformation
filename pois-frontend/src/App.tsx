@@ -8,8 +8,12 @@ function App() {
   const [pois, setPois] = useState<POI[]>([])
 
   const onCreateNewPoi = (p: POI) => {
-    createNewPoi(p).then(_ => {
-      setPois([...pois, p])
+    createNewPoi(p).then(resp => {
+      if (resp?.id) {
+        p.id = resp.id
+        setPois([...pois, p])
+      }
+
     }).catch(_ => {
       // display error notification
     })
@@ -24,7 +28,6 @@ function App() {
         copy.splice(index, 1)
         setPois(copy)
       }
-
     })
   }
 
