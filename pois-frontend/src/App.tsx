@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
-import { PoisMap } from './components/PoisMap'
+import { useEffect, useRef, useState } from 'react'
+import { PoisMap, type PoisMapHandle } from './components/PoisMap'
 import type { POI } from './Models/POI'
 import { createNewPoi, getAllPois, deletePoi, updatePoi } from './services/PoisService'
 import 'leaflet/dist/leaflet.css';
+import 'react-data-grid/lib/styles.css';
+import { PoisTabularView } from './components/PoisTabularView';
 
 function App() {
   const [pois, setPois] = useState<POI[]>([])
@@ -47,15 +49,25 @@ function App() {
     getAllPois().then(ps => setPois(ps));
   }, [])
 
+  const mapRef = useRef<PoisMapHandle>(null)
+
   return <>
-    <div style={{ height: '100vh' }}>
+    <div className='h-screen z-0'>
       <PoisMap
+        ref={mapRef}
         pois={pois}
         onNewMarker={onCreateNewPoi}
         onMarkerDelete={onPoiDelete}
         onMarkerUpdate={onMarkerUpdate}
       />
-    </div></>
+    </div>
+
+    <div className='fixed h-1/4 bottom-0 left-0 z-[400] w-full'>
+      <PoisTabularView
+        focusDblClicked={(lat, lng) => mapRef.current?.focus(lat, lng)}
+        pois={pois} />
+    </div>
+  </>
 }
 
 export default App

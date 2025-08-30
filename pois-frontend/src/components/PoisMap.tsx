@@ -1,4 +1,4 @@
-import { useRef, useState, type JSX } from "react";
+import React, { useImperativeHandle, useRef, useState } from "react";
 import type { POI } from "../Models/POI";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvent } from 'react-leaflet';
 import PoiMarker, { type PopiMarkerProps } from "./PoiPopup";
@@ -12,14 +12,28 @@ export type PoisMapProps = {
     onMarkerUpdate: PopiMarkerProps['onUpdate']
 }
 
+export type PoisMapHandle = {
+    focus(lat: number, lng: number): void
+}
 
-export function PoisMap({ pois, onNewMarker, onMarkerDelete, onMarkerUpdate }: PoisMapProps): JSX.Element {
+export const PoisMap = React.forwardRef<PoisMapHandle, PoisMapProps>(({ pois, onNewMarker, onMarkerDelete, onMarkerUpdate }: PoisMapProps, ref) => {
+    const mapRef = useRef<L.Map>(null)
+
+    useImperativeHandle(ref, () => {
+        return {
+            focus(lat, lng) {
+                mapRef.current?.flyTo([lat, lng], mapRef.current.getZoom())
+            }
+        }
+    })
+
 
     return <>
         <MapContainer
             center={[32.0853, 34.7818]} // Tel Aviv
             zoom={13}
-            style={{ height: "100%", width: "100%" }}>
+            style={{ height: "100%", width: "100%" }}
+            ref={mapRef}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
@@ -38,7 +52,8 @@ export function PoisMap({ pois, onNewMarker, onMarkerDelete, onMarkerUpdate }: P
             <CreateNewPoiPopup onSubmit={onNewMarker} />
         </MapContainer>
     </>
-}
+})
+
 
 /**
  * The component CreateNewPoiPopup creates a Marker with a Popup that is updated
