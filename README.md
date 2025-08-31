@@ -30,7 +30,7 @@ A full-stack application to view Points of Interest (POI) in both **interactive 
 
 ---
 
-## Getting Started (Development)
+## Getting Started
 
 1. Clone the repository:
 
