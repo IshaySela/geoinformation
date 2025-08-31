@@ -63,8 +63,7 @@ app.UseExceptionHandler(errorApp =>
             case BadHttpRequestException:
                 result = Results.Problem(
                     title: "Error while parsing json body",
-                    statusCode: StatusCodes.Status400BadRequest
-                    );
+                    statusCode: StatusCodes.Status400BadRequest);
                 break;
             default:
                 result = Results.Problem(
