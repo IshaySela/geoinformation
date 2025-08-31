@@ -26,7 +26,7 @@ A full-stack application to view Points of Interest (POI) in both **interactive 
 - Docker & Docker Compose
 - Frontend served via Nginx
 - Backend API exposed on port 5178
-- Frontend accessible on `http://localhost` (port 80)
+- Frontend accessible on [http://localhost](http://localhost) (port 80)
 - Configuration via environment variables
 
 ---
