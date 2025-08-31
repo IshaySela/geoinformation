@@ -15,6 +15,12 @@ services:
     volumes:
       - ./backend:/src
       - sqlite_data:/app/data
-
+  pois-frontend:
+    build:
+      context: ./pois-frontend
+      dockerfile: Dockerfile
+    container_name: pois-frontend
+    ports:
+      - 80:80
 volumes:
   sqlite_data:
