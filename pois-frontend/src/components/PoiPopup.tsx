@@ -2,7 +2,7 @@ import { Marker, Popup } from "react-leaflet"
 import type { POI } from "../Models/POI"
 import { useEffect, useRef, useState } from "react"
 import L from "leaflet"
-import MarkerIcon from "./MarkerIcon"
+import { MarkerIcon } from "./MarkerIcon"
 
 
 

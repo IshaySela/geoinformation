@@ -3,7 +3,7 @@ import type { POI } from "../Models/POI";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvent } from 'react-leaflet';
 import PoiMarker, { type PopiMarkerProps } from "./PoiPopup";
 import CreateNewPoiForm from "./CreateNewPoiForm";
-import MarkerIcon from "./MarkerIcon";
+import { RedMarkerIcon } from "./MarkerIcon";
 
 export type PoisMapProps = {
     pois: POI[],
@@ -96,7 +96,7 @@ function CreateNewPoiPopup({ onSubmit }: { onSubmit: (poi: POI) => void }) {
 
     return <>
         {
-            <Marker icon={MarkerIcon} ref={markerRef} position={[state.lat, state.lng]} autoPan={false}>
+            <Marker icon={RedMarkerIcon} ref={markerRef} position={[state.lat, state.lng]} autoPan={false}>
                 <Popup maxWidth={200} >
                     <CreateNewPoiForm latitude={state.lat} longitude={state.lng} onSubmit={onSubmit} />
                 </Popup>
