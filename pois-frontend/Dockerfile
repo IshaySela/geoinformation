@@ -1,15 +1,28 @@
-# Development & Production build for Vite React frontend
-FROM node:20-alpine AS build
+# Build stage: node:20-slim has some CVEs, use for development
+# only.
+FROM node:20-slim AS build
 WORKDIR /app
 
+# Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
+# Copy source and build
 COPY . .
-
-For production, build static files:
 RUN npm run build
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+
+# Runtime stage: Use Nginx Alpine (lightweight and secure)
+FROM nginx:alpine AS final
+WORKDIR /usr/share/nginx/html
+
+# Remove default Nginx static files
+RUN rm -rf ./*
+
+# Copy build output from Node stage
+COPY --from=build /app/dist .
+
+# Copy custom Nginx config for SPA routing
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

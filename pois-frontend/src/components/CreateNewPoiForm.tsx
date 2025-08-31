@@ -1,8 +1,6 @@
 import { useEffect, useState, type JSX } from "react";
 import { POISchema, type POI } from "../Models/POI";
 import { Field, Form } from "@base-ui-components/react";
-import { toast } from "react-toastify";
-
 
 export type CreateNewPoiFormProps = {
     latitude: number
