@@ -22,8 +22,8 @@ export function PoisTabularView({ pois, focusClicked, onDeleteClicked, onUpdateC
         { key: 'id', name: 'ID', minWidth: 100, maxWidth: 500 },
         { key: 'name', name: 'Name', editable: true, editorOptions: {} },
         { key: 'description', name: 'Description', editable: true },
-        { key: 'longitude', name: 'Longitude' },
         { key: 'latitude', name: 'Latitude' },
+        { key: 'longitude', name: 'Longitude' },
         {
             key: 'Actions', name: 'Actions', renderCell: c => {
                 const deleteClick = () => onDeleteClicked(c.row.id)
