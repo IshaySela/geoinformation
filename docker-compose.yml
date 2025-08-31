@@ -22,5 +22,7 @@ services:
     container_name: pois-frontend
     ports:
       - 80:80
+    environment:
+      - VITE_API_URL=http://localhost:5178
 volumes:
   sqlite_data:

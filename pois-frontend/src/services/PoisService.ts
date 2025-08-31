@@ -2,15 +2,21 @@ import z from "zod";
 import { POISchema, type POI } from "../Models/POI";
 import { CreateNewPoiResponseSchema } from "./Api";
 
+const apiUrl = ((): string => {
+    const envUrl = import.meta.env.VITE_API_URL
+    return envUrl ? envUrl : ''
+})()
+
 
 const GetAllPoisSchema = z.array(POISchema)
 type GetAllPoisResponse = z.infer<typeof GetAllPoisSchema>
 
 type CreateNewPoi = Omit<POI, "id">
+
 export type CreateNewPoiResponse = { id: string }
 
 export async function getAllPois(): Promise<GetAllPoisResponse> {
-    const result = await fetch('/pois/all')
+    const result = await fetch(`${apiUrl}/pois/all`)
     let pois: GetAllPoisResponse = []
     let asJson: unknown
 
@@ -34,7 +40,7 @@ export async function getAllPois(): Promise<GetAllPoisResponse> {
 }
 
 export async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiResponse> {
-    const result = await fetch('/pois/new', {
+    const result = await fetch(`${apiUrl}/pois/new`, {
         headers: {
             "Content-Type": 'application/json'
         },
@@ -48,7 +54,7 @@ export async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiRespons
     const asJson = await result.json()
     const parseResult = CreateNewPoiResponseSchema.safeParse(asJson)
 
-    if(!parseResult.success) {
+    if (!parseResult.success) {
         console.error('Recived unexpceted response from server', parseResult.error)
         throw Error('Recived unexpcted response from server')
     }
@@ -57,7 +63,7 @@ export async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiRespons
 }
 
 export async function deletePoi(id: string): Promise<boolean> {
-    const prm = fetch(`/pois/delete?id=${id}`, {
+    const prm = fetch(`${apiUrl}/pois/delete?id=${id}`, {
         method: 'delete'
     })
     let resp: Response | undefined = undefined
@@ -87,7 +93,7 @@ export async function updatePoi(poi: POI): Promise<boolean> {
     let resp: Response
 
     try {
-        resp = await fetch(`/pois/update?id=${poi.id}`, {
+        resp = await fetch(`${apiUrl}/pois/update?id=${poi.id}`, {
             method: 'put',
             body: JSON.stringify(updateBody),
             headers: {
