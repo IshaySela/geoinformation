@@ -72,7 +72,8 @@ docker-compose up
 - Add environment variables for configuring port
 - deploy with HTTPS by default
 
-
+## Known Bugs
+- POI marker accuracy drops as the map zoom increases
 
 ## Deployment Configuration
 ### Backend Service
