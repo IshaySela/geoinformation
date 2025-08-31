@@ -13,7 +13,10 @@ export interface PoiService {
     deletePoi(id: string): Promise<boolean>
     updatePoi(poi: POI): Promise<boolean>
 }
-const GetAllPoisSchema = z.array(POISchema)
+const GetAllPoisSchema = z.object({
+    pois: z.array(POISchema)
+})
+
 type GetAllPoisResponse = z.infer<typeof GetAllPoisSchema>
 
 type CreateNewPoi = Omit<POI, "id">
@@ -22,7 +25,9 @@ export type CreateNewPoiResponse = { id: string }
 
 async function getAllPois(): Promise<GetAllPoisResponse> {
     const result = await fetch(`${apiUrl}/pois/all`)
-    let pois: GetAllPoisResponse = []
+    let pois: GetAllPoisResponse = {
+        pois: []
+    }
     let asJson: unknown
 
     try {
@@ -38,6 +43,7 @@ async function getAllPois(): Promise<GetAllPoisResponse> {
     }
     else {
         console.error("Invalid response from server: ", pois)
+        throw Error("Recived unexpected response from the server")
     }
 
     return pois

@@ -2,6 +2,7 @@ using GeoInformation.Service;
 using Microsoft.EntityFrameworkCore;
 using GeoInformation.Api;
 using Microsoft.AspNetCore.Diagnostics;
+using System.Text.Json;
 
 const string corsPolicyName = "_poisAllowServe";
 
@@ -32,8 +33,8 @@ builder.Services.AddCors(options =>
         else
         {
             policy.WithOrigins(frontendUrl)
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         }
     });
 });
@@ -58,6 +59,7 @@ app.UseExceptionHandler(errorApp =>
 
         switch (exception)
         {
+            case JsonException:
             case BadHttpRequestException:
                 result = Results.Problem(
                     title: "Error while parsing json body",

@@ -56,8 +56,8 @@ function App() {
   }
 
   useEffect(() => {
-    PoiService.getAllPois().then(ps => {
-      setPois(ps)
+    PoiService.getAllPois().then(resp => {
+      setPois(resp.pois)
       toast.success('Loaded all POIs from server')
     }).catch(err => {
       console.log('Error while loading POIs from server', err)

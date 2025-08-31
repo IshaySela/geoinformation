@@ -9,6 +9,9 @@ namespace GeoInformation.Api;
 
 public static class PoisEndpoints
 {
+    /// <summary>
+    /// Extension method for configuring all of the POI endpoints to a route group.
+    /// </summary>
     public static RouteGroupBuilder MapPoisEndpoints(this RouteGroupBuilder builder)
     {
         builder.MapGet("/all", PoisEndpoints.GetAllPois);
@@ -18,12 +21,16 @@ public static class PoisEndpoints
         return builder;
     }
 
+    /// <summary>
+    /// Get all POIs from the database
+    /// </summary>
+    /// <returns>GetAllPoisResponse</returns>
     internal static async Task<IResult> GetAllPois(PoiDbContext dbContext)
     {
         var pois = await dbContext.Pois.ToListAsync();
         var response = pois.Select(p => new PoiDto(p.Id, p.Category, p.Name, p.Description, p.Latitude, p.Longitude));
 
-        return TypedResults.Ok(response);
+        return TypedResults.Ok(new GetAllPoisResponse(response ?? new List<PoiDto>()));
     }
 
     internal static async Task<IResult> CreateNewPoi(PoiDbContext dbContext,
