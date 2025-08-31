@@ -1,6 +1,9 @@
 import { Marker, Popup } from "react-leaflet"
 import type { POI } from "../Models/POI"
 import { useEffect, useRef, useState } from "react"
+import L from "leaflet"
+import MarkerIcon from "./MarkerIcon"
+
 
 
 export type PopiMarkerProps = {
@@ -18,7 +21,6 @@ export default function PoiMarker({ point, onDelete, onUpdate }: PopiMarkerProps
         setEditable(false)
     }
 
-
     useEffect(() => {
         ref.current?.bindTooltip(point.name, { permanent: true, direction: 'bottom', offset: [-15, 20] })
     }, [point])
@@ -35,6 +37,7 @@ export default function PoiMarker({ point, onDelete, onUpdate }: PopiMarkerProps
         position={[point.latitude, point.longitude]}
         title={point.name}
         ref={ref}
+        icon={MarkerIcon}
         riseOnHover>
         <Popup>
             {

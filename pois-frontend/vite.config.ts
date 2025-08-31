@@ -8,12 +8,13 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
-  server: {
+  server: { // for development, avoid CORs issues
     proxy: {
       '/pois': {
         target: 'http://localhost:5178',
         changeOrigin: true
       }
     }
-  }
+  },
+  base: '/'
 })

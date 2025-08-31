@@ -8,6 +8,8 @@ import { PoisTabularView } from './components/PoisTabularView';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
+
 function App() {
   const [pois, setPois] = useState<POI[]>([])
 
@@ -61,6 +63,13 @@ function App() {
       console.log('Error while loading POIs from server', err)
       toast.error('Error while loading POIs from server')
     });
+
+    // L.Icon.Default.mergeOptions({
+    //   iconRetinaUrl: markerIcon2x,
+    //   iconUrl: markerIcon,
+    //   shadowUrl: markerShadow,
+    // });
+    // console.log('Updated the default marker icons', { markerIcon2x, markerIcon, markerShadow })
   }, [])
 
   const TEL_AVIV_LATLNG: [number, number] = [32.0853, 34.7818]
