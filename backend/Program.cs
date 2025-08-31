@@ -8,9 +8,9 @@ const string corsPolicyName = "_poisAllowServe";
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddDbContext<PoiDbContext>(builder =>
+builder.Services.AddDbContext<PoiDbContext>(dbBuilder =>
     {
-        builder.UseSqlite("Data Source=app.db");
+        dbBuilder.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
 builder.Services.AddOpenApi();
