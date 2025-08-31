@@ -38,4 +38,5 @@ A full-stack application to view Points of Interest (POI) in both **interactive 
 git clone https://github.com/IshaySela/geoinformation
 cd geoinformation
 docker-compose up
+Open browser on http://localhost
 ```
