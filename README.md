@@ -74,6 +74,7 @@ docker-compose up
 
 ## Known Bugs
 - POI marker accuracy drops as the map zoom increases
+- Create new POI form is slightly off center relative to the cursor marker
 
 ## Deployment Configuration
 ### Backend Service

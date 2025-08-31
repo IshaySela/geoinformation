@@ -86,8 +86,8 @@ function App() {
     </div>
 
     <div className="fixed bottom-0 left-0 w-full z-[9999] shadow-lg flex flex-col max-h-1/4">
-      <button className='justify-center' onClick={_ => setOpen(!open)}>
-        {open ? 'Close Tabular View' : 'Open Tabular View'}
+      <button className='bg-slate-700 text-white w-fit mx-auto px-4 rounded-t-lg border' onClick={_ => setOpen(!open)}>
+        {open ? '⇊' : '⇈'}
       </button>
       {
         open ?
