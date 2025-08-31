@@ -30,11 +30,7 @@ async function getAllPois(): Promise<GetAllPoisResponse> {
     }
     let asJson: unknown
 
-    try {
-        asJson = await result.json()
-    } catch (error) {
-        // TODO: add error handling
-    }
+    asJson = await result.json() // If fail, buble exception up
 
     const parsed = GetAllPoisSchema.safeParse(asJson)
 
@@ -42,7 +38,7 @@ async function getAllPois(): Promise<GetAllPoisResponse> {
         pois = parsed.data;
     }
     else {
-        console.error("Invalid response from server: ", pois)
+        console.error("Invalid response from server: ", { pois: pois, errors: parsed.error })
         throw Error("Recived unexpected response from the server")
     }
 
