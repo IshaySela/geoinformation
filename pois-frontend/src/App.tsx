@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { PoisMap, type PoisMapHandle } from './components/PoisMap'
 import type { POI } from './Models/POI'
-import { createNewPoi, getAllPois, deletePoi, updatePoi } from './services/PoisService'
+import PoiService from './services/PoisService'
 import 'leaflet/dist/leaflet.css';
 import 'react-data-grid/lib/styles.css';
 import { PoisTabularView } from './components/PoisTabularView';
@@ -14,7 +14,7 @@ function App() {
   const [pois, setPois] = useState<POI[]>([])
 
   const onCreateNewPoi = (p: POI) => {
-    createNewPoi(p).then(resp => {
+    PoiService.createNewPoi(p).then(resp => {
       p.id = resp.id
       setPois([...pois, p])
       toast.success(`Created new POI ${p.name}`)
@@ -22,7 +22,7 @@ function App() {
   }
 
   const onPoiDelete = (id: string) => {
-    deletePoi(id).then(_ => {
+    PoiService.deletePoi(id).then(_ => {
       const index = pois.findIndex(p => p.id == id)
 
       if (index != -1) {
@@ -39,7 +39,7 @@ function App() {
   }
 
   const onMarkerUpdate = (updated: POI) => {
-    updatePoi(updated).then(_ => {
+    PoiService.updatePoi(updated).then(_ => {
       const copy = [...pois]
       const index = copy.findIndex(p => p.id === updated.id)
 
@@ -56,7 +56,7 @@ function App() {
   }
 
   useEffect(() => {
-    getAllPois().then(ps => {
+    PoiService.getAllPois().then(ps => {
       setPois(ps)
       toast.success('Loaded all POIs from server')
     }).catch(err => {

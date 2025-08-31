@@ -7,7 +7,12 @@ const apiUrl = ((): string => {
     return envUrl ? envUrl : ''
 })()
 
-
+export interface PoiService {
+    getAllPois(): Promise<GetAllPoisResponse>
+    createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiResponse>
+    deletePoi(id: string): Promise<boolean>
+    updatePoi(poi: POI): Promise<boolean>
+}
 const GetAllPoisSchema = z.array(POISchema)
 type GetAllPoisResponse = z.infer<typeof GetAllPoisSchema>
 
@@ -15,11 +20,10 @@ type CreateNewPoi = Omit<POI, "id">
 
 export type CreateNewPoiResponse = { id: string }
 
-export async function getAllPois(): Promise<GetAllPoisResponse> {
+async function getAllPois(): Promise<GetAllPoisResponse> {
     const result = await fetch(`${apiUrl}/pois/all`)
     let pois: GetAllPoisResponse = []
     let asJson: unknown
-
 
     try {
         asJson = await result.json()
@@ -39,7 +43,7 @@ export async function getAllPois(): Promise<GetAllPoisResponse> {
     return pois
 }
 
-export async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiResponse> {
+async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiResponse> {
     const result = await fetch(`${apiUrl}/pois/new`, {
         headers: {
             "Content-Type": 'application/json'
@@ -62,7 +66,7 @@ export async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiRespons
     return parseResult.data
 }
 
-export async function deletePoi(id: string): Promise<boolean> {
+async function deletePoi(id: string): Promise<boolean> {
     const prm = fetch(`${apiUrl}/pois/delete?id=${id}`, {
         method: 'delete'
     })
@@ -81,7 +85,7 @@ export async function deletePoi(id: string): Promise<boolean> {
     return false
 }
 
-export async function updatePoi(poi: POI): Promise<boolean> {
+async function updatePoi(poi: POI): Promise<boolean> {
     const updateBody: Omit<POI, "id"> = {
         category: poi.category,
         description: poi.description,
@@ -109,3 +113,12 @@ export async function updatePoi(poi: POI): Promise<boolean> {
 
     return resp.ok
 }
+
+const PoiService: PoiService = {
+    createNewPoi: createNewPoi,
+    deletePoi: deletePoi,
+    getAllPois: getAllPois,
+    updatePoi: updatePoi,
+}
+
+export default PoiService
