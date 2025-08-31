@@ -39,3 +39,5 @@ git clone https://github.com/IshaySela/geoinformation
 cd geoinformation
 docker-compose up
 ```
+
+## Future Improvments
