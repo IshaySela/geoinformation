@@ -21,12 +21,20 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(corsPolicyName, policy =>
     {
-        var frontendUrl = builder.Configuration["POIS_FRONTEND_URL"] ?? "http://localhost:5173";
-        // policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-        policy
-            .WithOrigins(frontendUrl)
+        var frontendUrl = builder.Configuration["POIS_FRONTEND_URL"] ?? "http://localhost";
+
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+        else
+        {
+            policy.WithOrigins(frontendUrl)
             .AllowAnyHeader()
             .AllowAnyMethod();
+        }
     });
 });
 
