@@ -20,7 +20,7 @@ A full-stack application to view Points of Interest (POI) in both **interactive 
 **Backend:**
 - .NET Core Web API (.NET 9)
 - EF Core with SQLite database
-- RESTful endpoints CRUD points
+- RESTful endpoints for CRUD points of interest
 
 **Deployment:**
 - Docker & Docker Compose
