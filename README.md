@@ -31,22 +31,24 @@ A full-stack application to view Points of Interest (POI) in both **interactive 
 
 ---
 
-## Getting Started
+## Quick Start Guide
 
-1. Clone the repository:
+1. Requirements - [docker](https://docs.docker.com/engine/install/) & [docker-compose](https://docs.docker.com/compose/install/)
+
+2. Clone the repository:
 
 ```sh
 git clone https://github.com/IshaySela/geoinformation
 ```
 
-2. Enter the directory & Run:
+3. Enter the directory & Run:
 
 ```sh
 cd geoinformation
 docker-compose up
 ```
 
-3. Wait for the project to build and open browser on [http://localhost](http://localhost)
+4. Wait for the project to build and open browser on [http://localhost](http://localhost)
 
 ## Future Improvments
 
@@ -58,14 +60,17 @@ docker-compose up
 - Testing
 
 ### Backend
-- Testing
 - Getting POIs relative to other point - get all POIs at radius from specific lat, long. This can be used as optimization,
   loading points at a radius from the current viewpoint.
 - Security - authentication, POI encryption
+- Rate limiting
+- API versioning
+- Testing
 
 ### Deployment
 - Apply migrations on backend container up (currently copying the app.db sqlite database with the existing tables)
-- 
+- Add environment variables for configuring port
+- deploy with HTTPS by default
 
 
 
