@@ -13,7 +13,7 @@ services:
       - POIS_FRONTEND_URL=http://localhost
     volumes:
       - ./backend:/src
-      - sqlite_data:/app/data
+      - ./backend/app.db:/app/app.db
   pois-frontend:
     build:
       context: ./pois-frontend
@@ -23,6 +23,3 @@ services:
       - 80:80
     environment:
       - VITE_API_URL=http://localhost:5178
-volumes:
-  sqlite_data:
-    - ./backend/app.db:/app/app.db
