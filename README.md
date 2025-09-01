@@ -33,7 +33,7 @@ A full-stack application to view Points of Interest (POI) in both **interactive 
 
 ## Quick Start Guide
 
-1. Requirements - [docker](https://docs.docker.com/engine/install/) & [docker-compose](https://docs.docker.com/compose/install/)
+1. Requirements - [docker](https://docs.docker.com/engine/install/)
 
 2. Clone the repository:
 
@@ -45,7 +45,7 @@ git clone https://github.com/IshaySela/geoinformation
 
 ```sh
 cd geoinformation
-docker-compose up
+docker compose up
 ```
 
 4. Wait for the project to build and open browser on [http://localhost](http://localhost)
