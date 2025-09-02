@@ -1,5 +1,5 @@
 import { type POI } from "../Models/POI";
-import { CreateNewPoiResponseSchema, GetAllPoisSchema, ProblemResponseSchema, type ApiResponse, type CreateNewPoi, type CreateNewPoiResponse, type GetAllPoisResponse } from "./Api";
+import { CreateNewPoiResponseSchema, GetAllPoisSchema, ProblemResponseSchema, type ApiResponse, type CreateNewPoi, type CreateNewPoiResponse, type GetAllPoisResponse, type Problem } from "./Api";
 
 const apiUrl = ((): string => {
     const envUrl = import.meta.env.VITE_API_URL
@@ -17,27 +17,20 @@ export interface PoiService {
 
 async function getAllPois(): Promise<ApiResponse<GetAllPoisResponse>> {
     const result = await fetch(`${apiUrl}/pois/all`)
-    let pois: GetAllPoisResponse = {
-        pois: []
-    }
     let asJson: unknown
 
     asJson = await result.json() // If fail, buble exception up
 
     const parsed = GetAllPoisSchema.safeParse(asJson)
-
+    
     if (parsed.success) {
-        pois = parsed.data;
-    }
-    else {
-        console.error("Invalid response from server: ", { pois: pois, errors: parsed.error })
-        throw Error("Recived unexpected response from the server")
+        return {
+            success: true,
+            resp: parsed.data
+        }
     }
 
-    return {
-        success: true,
-        resp: pois
-    }
+    return createProblemFromBadRequest(result)
 }
 
 async function createNewPoi(p: CreateNewPoi): Promise<ApiResponse<CreateNewPoiResponse>> {
@@ -49,29 +42,15 @@ async function createNewPoi(p: CreateNewPoi): Promise<ApiResponse<CreateNewPoiRe
         body: JSON.stringify(p)
     })
 
-    // if the operation was not a success, parse the problem and return
-    if (!result.ok) {
-        const problem = ProblemResponseSchema.parse(await result.json())
-
-        return {
-            success: false,
-            problem: {
-                title: problem.title
-            }
-        }
-    }
+    if (!result.ok)
+        return createProblemFromBadRequest(result)
 
     const asJson = await result.json()
-    const parseResult = CreateNewPoiResponseSchema.safeParse(asJson)
-
-    if (!parseResult.success) {
-        console.error('Recived unexpceted response from server', parseResult.error)
-        throw Error('Recived unexpcted response from server')
-    }
+    const parseResult = CreateNewPoiResponseSchema.parse(asJson)
 
     return {
         success: true,
-        resp: parseResult.data
+        resp: parseResult
     }
 }
 
@@ -83,15 +62,7 @@ async function deletePoi(id: string): Promise<ApiResponse> {
     if (resp !== undefined && resp.ok)
         return { success: true }
 
-    // if the operation was not a success, parse the problem and return
-    const problem = ProblemResponseSchema.parse(await resp.json())
-
-    return {
-        success: false,
-        problem: {
-            title: problem.title
-        }
-    }
+    return createProblemFromBadRequest(resp)
 }
 
 async function updatePoi(poi: POI): Promise<ApiResponse<void>> {
@@ -105,23 +76,31 @@ async function updatePoi(poi: POI): Promise<ApiResponse<void>> {
 
     let resp: Response
 
-    try {
-        resp = await fetch(`${apiUrl}/pois/update?id=${poi.id}`, {
-            method: 'put',
-            body: JSON.stringify(updateBody),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+    resp = await fetch(`${apiUrl}/pois/update?id=${poi.id}`, {
+        method: 'put',
+        body: JSON.stringify(updateBody),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
 
-    } catch (error) {
-        // error occured
-        console.error('Error occured while updating POI ', poi.id, error)
-        throw error;
-    }
 
     if (resp.ok) {
         return { success: true }
+    }
+
+    return createProblemFromBadRequest(resp)
+}
+
+/**
+ * The function createProblemFromBadRequest gets a response, and parses the body as a problem. 
+ * @note resp object should not be read before calling this function!
+ * @param resp The response from the pois server.
+ * @returns A problem. if the body is not a problem, an error is thrown.
+ */
+async function createProblemFromBadRequest<T = void>(resp: Response): Promise<ApiResponse<T>> {
+    if (resp.bodyUsed) {
+        throw Error("Cannot create problem from used response");
     }
 
     const problemResponse: unknown = await resp.json()

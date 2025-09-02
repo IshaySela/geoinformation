@@ -71,7 +71,7 @@ function App() {
         if (!resp.success) {
           return toast.error(`Errur occured while loading POIs from server ${resp.problem.title}`);
         }
-
+        console.log(resp)
         setPois(resp.resp.pois)
         toast.success('Loaded all POIs from server')
       }).catch(err => {
