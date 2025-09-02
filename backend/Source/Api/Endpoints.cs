@@ -86,7 +86,15 @@ public static class PoisEndpoints
         };
 
         dbContext.Update(updated);
-        await dbContext.SaveChangesAsync();
+
+        try
+        {
+            await dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException) // the exception is thrown when unexpceted amount of rows has changed
+        {
+            return Results.NotFound();
+        }
 
         return Results.Ok();
     }

@@ -25,4 +25,10 @@ public record CreateNewPoiRequest
     public double Latitude { get; init; }
 }
 
-public record UpdatePoiRequest(string Name, string Category, string Description, double Longitude, double Latitude);
+public record UpdatePoiRequest(
+    [property: JsonRequired, JsonPropertyName("name")] string Name,
+    [property: JsonRequired, JsonPropertyName("category")] string Category,
+    [property: JsonRequired, JsonPropertyName("description")] string Description,
+    [property: JsonRequired, JsonPropertyName("longitude")] double Longitude,
+    [property: JsonRequired, JsonPropertyName("latitude")] double Latitude
+);
