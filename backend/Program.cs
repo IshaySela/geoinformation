@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using GeoInformation.Api;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 
 const string corsPolicyName = "_poisAllowServe";
 
@@ -16,7 +17,26 @@ builder.Services.AddDbContext<PoiDbContext>(dbBuilder =>
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddProblemDetails();
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = ctx =>
+    {
+        ctx.ProblemDetails = ctx.Exception switch
+        {
+            BadHttpRequestException or JsonException => new ProblemDetails
+            {
+                Title = "Error while parsing json body",
+                Status = StatusCodes.Status400BadRequest
+            },
+
+            _ => new ProblemDetails
+            {
+                Title = "Internal Server Error",
+                Status = StatusCodes.Status500InternalServerError
+            } // default
+        };
+    };
+});
 
 builder.Services.AddCors(options =>
 {
@@ -45,36 +65,6 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
-app.UseExceptionHandler(errorApp =>
-{
-    errorApp.Run(async context =>
-    {
-        var feature = context.Features.Get<IExceptionHandlerFeature>();
-        if (feature == null)
-            return;
-
-        var exception = feature.Error;
-        IResult result;
-
-        switch (exception)
-        {
-            case JsonException:
-            case BadHttpRequestException:
-                result = Results.Problem(
-                    title: "Error while parsing json body",
-                    statusCode: StatusCodes.Status400BadRequest);
-                break;
-            default:
-                result = Results.Problem(
-                    title: "Internal server error");
-                break;
-        }
-
-        await result.ExecuteAsync(context);
-        return;
-    });
-});
 
 app.UseCors(corsPolicyName);
 
