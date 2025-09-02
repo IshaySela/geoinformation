@@ -29,11 +29,13 @@ builder.Services.AddProblemDetails(options =>
                 Status = StatusCodes.Status400BadRequest
             },
 
-            _ => new ProblemDetails
+            Exception e => new ProblemDetails
             {
                 Title = "Internal Server Error",
-                Status = StatusCodes.Status500InternalServerError
-            } // default
+                Status = StatusCodes.Status500InternalServerError,
+                Detail = builder.Environment.IsDevelopment() ? e.Message : null
+            },
+            _ => ctx.ProblemDetails
         };
     };
 });
