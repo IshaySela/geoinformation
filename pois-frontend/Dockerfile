@@ -3,15 +3,14 @@
 FROM node:20-slim AS build
 WORKDIR /app
 
-# Install dependencies
 COPY package*.json ./
 RUN npm ci
 
-# Copy source and build
+# Copy source files and build
 COPY . .
 RUN npm run build
 
-# Runtime stage: Use Nginx Alpine (lightweight and secure)
+# Runtime stage: Use Nginx Alpine
 FROM nginx:alpine AS final
 WORKDIR /usr/share/nginx/html
 
@@ -21,7 +20,7 @@ RUN rm -rf ./*
 # Copy build output from Node stage
 COPY --from=build /app/dist .
 
-# Copy custom Nginx config for SPA routing
+# Copy custom Nginx config
 # COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
