@@ -19,6 +19,7 @@ public static class PoisEndpoints
         builder.MapPost("/new", PoisEndpoints.CreateNewPoi);
         builder.MapDelete("/delete", PoisEndpoints.DeletePoi);
         builder.MapPut("/update", PoisEndpoints.UpdatePoi);
+
         return builder;
     }
 
@@ -37,15 +38,11 @@ public static class PoisEndpoints
     internal static async Task<IResult> CreateNewPoi(PoiDbContext dbContext,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] CreateNewPoiRequest req)
     {
-        var context = new ValidationContext(req);
-        var results = new List<ValidationResult>();
+        IResult? validationProblem = ValidateRequest(req);
 
-        if (!Validator.TryValidateObject(req, context, results, true))
+        if (validationProblem is not null)
         {
-            // Map the validation errors to problems array
-            return Results.ValidationProblem(
-                    errors: results.ToDictionary(valResult => valResult.MemberNames.FirstOrDefault() ?? "", valResult => new[] { valResult.ErrorMessage! })
-                );
+            return validationProblem;
         }
 
         var created = new POI()
@@ -87,6 +84,13 @@ public static class PoisEndpoints
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] UpdatePoiRequest req,
         PoiDbContext dbContext)
     {
+        IResult? validationProblem = ValidateRequest(req);
+
+        if (validationProblem is not null)
+        {
+            return validationProblem;
+        }
+
         var updated = new POI()
         {
             Name = req.Name,
@@ -109,5 +113,31 @@ public static class PoisEndpoints
         }
 
         return Results.Ok();
+    }
+
+    internal static IResult? ValidateRequest<T>(T request) where T : class
+    {
+        var context = new ValidationContext(request);
+        var results = new List<ValidationResult>();
+        bool valid = false;
+
+        try
+        {
+            valid = Validator.TryValidateObject(request, context, results, true);
+        }
+        catch (System.Exception)
+        {
+            valid = false;
+        }
+
+        if (!valid)
+        {
+            // Map the validation errors to problems array
+            return Results.ValidationProblem(
+                    errors: results.ToDictionary(valResult => valResult.MemberNames.FirstOrDefault() ?? "", valResult => new[] { valResult.ErrorMessage! })
+                );
+        }
+
+        return null;
     }
 }

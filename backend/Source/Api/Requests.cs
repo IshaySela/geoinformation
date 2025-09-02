@@ -16,6 +16,6 @@ public record UpdatePoiRequest(
     [property: JsonRequired, JsonPropertyName("name")] string Name,
     [property: JsonRequired, JsonPropertyName("category")] string Category,
     [property: JsonRequired, JsonPropertyName("description")] string Description,
-    [property: JsonRequired, JsonPropertyName("longitude")] double Longitude,
-    [property: JsonRequired, JsonPropertyName("latitude")] double Latitude
+    [property: JsonRequired, JsonPropertyName("longitude"), Range(-180, 180)] double Longitude,
+    [property: JsonRequired, JsonPropertyName("latitude"), Range(-90, 90)] double Latitude
 );

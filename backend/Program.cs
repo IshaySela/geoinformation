@@ -33,7 +33,6 @@ builder.Services.AddProblemDetails(options =>
             {
                 Title = "Internal Server Error",
                 Status = StatusCodes.Status500InternalServerError,
-                Detail = builder.Environment.IsDevelopment() ? e.Message : null
             },
             _ => ctx.ProblemDetails
         };
