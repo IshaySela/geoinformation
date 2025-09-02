@@ -10,8 +10,8 @@ const apiUrl = ((): string => {
 export interface PoiService {
     getAllPois(): Promise<ApiResponse<GetAllPoisResponse>>
     createNewPoi(p: CreateNewPoi): Promise<ApiResponse<CreateNewPoiResponse>>
-    deletePoi(id: string): Promise<boolean>
-    updatePoi(poi: POI): Promise<ApiResponse<void>>
+    deletePoi(id: string): Promise<ApiResponse>
+    updatePoi(poi: POI): Promise<ApiResponse>
 }
 
 
@@ -75,23 +75,23 @@ async function createNewPoi(p: CreateNewPoi): Promise<ApiResponse<CreateNewPoiRe
     }
 }
 
-async function deletePoi(id: string): Promise<boolean> {
-    const prm = fetch(`${apiUrl}/pois/delete?id=${id}`, {
+async function deletePoi(id: string): Promise<ApiResponse> {
+    const resp = await fetch(`${apiUrl}/pois/delete?id=${id}`, {
         method: 'delete'
     })
-    let resp: Response | undefined = undefined
-
-    try {
-        resp = await prm
-    } catch (error) {
-        // handle error state
-    }
 
     if (resp !== undefined && resp.ok)
-        return true
+        return { success: true }
 
-    // add notification, problem, etc.
-    return false
+    // if the operation was not a success, parse the problem and return
+    const problem = ProblemResponseSchema.parse(await resp.json())
+
+    return {
+        success: false,
+        problem: {
+            title: problem.title
+        }
+    }
 }
 
 async function updatePoi(poi: POI): Promise<ApiResponse<void>> {

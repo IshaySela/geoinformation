@@ -26,7 +26,10 @@ function App() {
   }
 
   const onPoiDelete = (id: string) => {
-    PoiService.deletePoi(id).then(_ => {
+    PoiService.deletePoi(id).then(resp => {
+      if (!resp.success)
+        return toast.error(`Failed creating POI ${id}`)
+
       const index = pois.findIndex(p => p.id == id)
 
       if (index != -1) {
