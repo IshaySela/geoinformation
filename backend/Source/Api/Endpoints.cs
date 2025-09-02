@@ -73,7 +73,7 @@ public static class PoisEndpoints
         }
         catch (DbUpdateConcurrencyException) // Operation failed, affected 0 rows instead of 1
         {
-            return Results.NotFound();
+            return Results.Problem($"Could not find entity with id {id}", statusCode: StatusCodes.Status404NotFound);
         }
 
         return Results.Ok();
@@ -109,7 +109,7 @@ public static class PoisEndpoints
         }
         catch (DbUpdateConcurrencyException) // the exception is thrown when unexpceted amount of rows has changed
         {
-            return Results.NotFound();
+            return Results.Problem($"Could not find entity with id {id}", statusCode: StatusCodes.Status404NotFound);
         }
 
         return Results.Ok();
