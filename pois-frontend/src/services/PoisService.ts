@@ -1,11 +1,11 @@
-import z from "zod";
-import { POISchema, type POI } from "../Models/POI";
-import { CreateNewPoiResponseSchema } from "./Api";
+import { type POI } from "../Models/POI";
+import { CreateNewPoiResponseSchema, GetAllPoisSchema, type CreateNewPoi, type CreateNewPoiResponse, type GetAllPoisResponse } from "./Api";
 
 const apiUrl = ((): string => {
     const envUrl = import.meta.env.VITE_API_URL
     return envUrl ? envUrl : ''
 })()
+
 
 export interface PoiService {
     getAllPois(): Promise<GetAllPoisResponse>
@@ -13,15 +13,7 @@ export interface PoiService {
     deletePoi(id: string): Promise<boolean>
     updatePoi(poi: POI): Promise<boolean>
 }
-const GetAllPoisSchema = z.object({
-    pois: z.array(POISchema)
-})
 
-type GetAllPoisResponse = z.infer<typeof GetAllPoisSchema>
-
-type CreateNewPoi = Omit<POI, "id">
-
-export type CreateNewPoiResponse = { id: string }
 
 async function getAllPois(): Promise<GetAllPoisResponse> {
     const result = await fetch(`${apiUrl}/pois/all`)
