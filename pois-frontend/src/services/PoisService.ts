@@ -80,7 +80,7 @@ async function deletePoi(id: string): Promise<boolean> {
         // handle error state
     }
 
-    if (resp !== undefined && resp.status === 200)
+    if (resp !== undefined && resp.ok)
         return true
 
     // add notification, problem, etc.
