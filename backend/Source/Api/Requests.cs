@@ -3,27 +3,13 @@ namespace GeoInformation.Api;
 
 using System.Text.Json.Serialization;
 
-public record CreateNewPoiRequest
-{
-    [JsonPropertyName("name")]
-    [JsonRequired]
-    public string Name { get; init; } = string.Empty;
-
-    [JsonPropertyName("category")]
-    [JsonRequired]
-    public string Category { get; init; } = string.Empty;
-
-    [JsonPropertyName("description")]
-    public string? Description { get; init; }
-
-    [JsonPropertyName("longitude")]
-    [JsonRequired]
-    public double Longitude { get; init; }
-
-    [JsonPropertyName("latitude")]
-    [JsonRequired]
-    public double Latitude { get; init; }
-}
+public record CreateNewPoiRequest(
+    [property: JsonPropertyName("name"), JsonRequired] string Name,
+    [property: JsonPropertyName("category"), JsonRequired] string Category,
+    [property: JsonPropertyName("description")] string? Description,
+    [property: JsonPropertyName("longitude"), JsonRequired] double Longitude,
+    [property: JsonPropertyName("latitude"), JsonRequired] double Latitude
+);
 
 public record UpdatePoiRequest(
     [property: JsonRequired, JsonPropertyName("name")] string Name,
