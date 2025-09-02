@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using GeoInformation.Models;
 using GeoInformation.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,17 @@ public static class PoisEndpoints
     internal static async Task<IResult> CreateNewPoi(PoiDbContext dbContext,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] CreateNewPoiRequest req)
     {
+        var context = new ValidationContext(req);
+        var results = new List<ValidationResult>();
+
+        if (!Validator.TryValidateObject(req, context, results, true))
+        {
+            // Map the validation errors to problems array
+            return Results.ValidationProblem(
+                    errors: results.ToDictionary(valResult => valResult.MemberNames.FirstOrDefault() ?? "", valResult => new[] { valResult.ErrorMessage! })
+                );
+        }
+
         var created = new POI()
         {
             Id = Guid.NewGuid().ToString(),
@@ -49,7 +61,7 @@ public static class PoisEndpoints
 
         await dbContext.Pois.AddAsync(created);
         await dbContext.SaveChangesAsync();
-        
+
         return TypedResults.Ok(new CreateNewPoiResponse(created.Id));
     }
 
@@ -66,7 +78,7 @@ public static class PoisEndpoints
         {
             return Results.NotFound();
         }
-        
+
         return Results.Ok();
     }
 
