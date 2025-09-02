@@ -1,5 +1,5 @@
 import { type POI } from "../Models/POI";
-import { CreateNewPoiResponseSchema, GetAllPoisSchema, type CreateNewPoi, type CreateNewPoiResponse, type GetAllPoisResponse } from "./Api";
+import { CreateNewPoiResponseSchema, GetAllPoisSchema, ProblemResponseSchema, type ApiResponse, type CreateNewPoi, type CreateNewPoiResponse, type GetAllPoisResponse } from "./Api";
 
 const apiUrl = ((): string => {
     const envUrl = import.meta.env.VITE_API_URL
@@ -8,14 +8,14 @@ const apiUrl = ((): string => {
 
 
 export interface PoiService {
-    getAllPois(): Promise<GetAllPoisResponse>
-    createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiResponse>
+    getAllPois(): Promise<ApiResponse<GetAllPoisResponse>>
+    createNewPoi(p: CreateNewPoi): Promise<ApiResponse<CreateNewPoiResponse>>
     deletePoi(id: string): Promise<boolean>
-    updatePoi(poi: POI): Promise<boolean>
+    updatePoi(poi: POI): Promise<ApiResponse<void>>
 }
 
 
-async function getAllPois(): Promise<GetAllPoisResponse> {
+async function getAllPois(): Promise<ApiResponse<GetAllPoisResponse>> {
     const result = await fetch(`${apiUrl}/pois/all`)
     let pois: GetAllPoisResponse = {
         pois: []
@@ -34,10 +34,13 @@ async function getAllPois(): Promise<GetAllPoisResponse> {
         throw Error("Recived unexpected response from the server")
     }
 
-    return pois
+    return {
+        success: true,
+        resp: pois
+    }
 }
 
-async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiResponse> {
+async function createNewPoi(p: CreateNewPoi): Promise<ApiResponse<CreateNewPoiResponse>> {
     const result = await fetch(`${apiUrl}/pois/new`, {
         headers: {
             "Content-Type": 'application/json'
@@ -46,8 +49,17 @@ async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiResponse> {
         body: JSON.stringify(p)
     })
 
-    if (!result.ok)
-        throw Error('Error while creating new POI')
+    // if the operation was not a success, parse the problem and return
+    if (!result.ok) {
+        const problem = ProblemResponseSchema.parse(await result.json())
+
+        return {
+            success: false,
+            problem: {
+                title: problem.title
+            }
+        }
+    }
 
     const asJson = await result.json()
     const parseResult = CreateNewPoiResponseSchema.safeParse(asJson)
@@ -57,7 +69,10 @@ async function createNewPoi(p: CreateNewPoi): Promise<CreateNewPoiResponse> {
         throw Error('Recived unexpcted response from server')
     }
 
-    return parseResult.data
+    return {
+        success: true,
+        resp: parseResult.data
+    }
 }
 
 async function deletePoi(id: string): Promise<boolean> {
@@ -79,7 +94,7 @@ async function deletePoi(id: string): Promise<boolean> {
     return false
 }
 
-async function updatePoi(poi: POI): Promise<boolean> {
+async function updatePoi(poi: POI): Promise<ApiResponse<void>> {
     const updateBody: Omit<POI, "id"> = {
         category: poi.category,
         description: poi.description,
@@ -102,10 +117,23 @@ async function updatePoi(poi: POI): Promise<boolean> {
     } catch (error) {
         // error occured
         console.error('Error occured while updating POI ', poi.id, error)
-        return false
+        throw error;
     }
 
-    return resp.ok
+    if (resp.ok) {
+        return { success: true }
+    }
+
+    const problemResponse: unknown = await resp.json()
+
+    const body = ProblemResponseSchema.parse(problemResponse)
+
+    return {
+        success: false,
+        problem: {
+            title: body.title
+        }
+    }
 }
 
 const PoiService: PoiService = {

@@ -15,9 +15,13 @@ function App() {
 
   const onCreateNewPoi = (p: POI) => {
     PoiService.createNewPoi(p).then(resp => {
-      p.id = resp.id
+      if (!resp.success) {
+        return toast.error(`Error occured while creating POI: ${resp.problem.title}`)
+      }
+
+      p.id = resp.resp.id
       setPois([...pois, p])
-      toast.success(`Created new POI ${p.name}`)
+      return toast.success(`Created new POI ${p.name}`)
     })
   }
 
@@ -39,14 +43,17 @@ function App() {
   }
 
   const onMarkerUpdate = (updated: POI) => {
-    PoiService.updatePoi(updated).then(_ => {
+    PoiService.updatePoi(updated).then(resp => {
+      if (!resp.success) {
+        return toast.error(`Error occured while trying to update the POI ${resp.problem.title}`)
+      }
+
       const copy = [...pois]
       const index = copy.findIndex(p => p.id === updated.id)
 
       if (index === -1) {
         console.error(`Error while updating poi, poi with id ${updated.id} doesnt exists`)
-        toast.error(`Error occured while trying to update POI ${updated.name}`)
-        return
+        return toast.error(`Error occured while trying to update POI ${updated.name}`)
       }
 
       copy[index] = updated
@@ -56,13 +63,18 @@ function App() {
   }
 
   useEffect(() => {
-    PoiService.getAllPois().then(resp => {
-      setPois(resp.pois)
-      toast.success('Loaded all POIs from server')
-    }).catch(err => {
-      console.log('Error while loading POIs from server', err)
-      toast.error('Error while loading POIs from server')
-    });
+    PoiService.getAllPois()
+      .then(resp => {
+        if (!resp.success) {
+          return toast.error(`Errur occured while loading POIs from server ${resp.problem.title}`);
+        }
+
+        setPois(resp.resp.pois)
+        toast.success('Loaded all POIs from server')
+      }).catch(err => {
+        console.log('Error while loading POIs from server', err)
+        toast.error("Error occured while loading POIs from server")
+      });
 
   }, [])
 

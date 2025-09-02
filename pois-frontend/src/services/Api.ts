@@ -2,13 +2,20 @@ import z from "zod";
 import { POISchema, type POI } from "../Models/POI";
 
 
-export interface Problem { }
-export type ApiResponse<T> = { success: true, data: T } | { success: false, problem: Problem }
+export const ProblemResponseSchema = z.object({
+    title: z.string()
+})
 
+export type Problem = z.infer<typeof ProblemResponseSchema>
+
+export type ApiResponse<T = void> =
+  | (T extends void ? { success: true } : { success: true; resp: T })
+  | { success: false; problem: Problem };
 
 export const CreateNewPoiResponseSchema = z.object({
     id: z.string()
 })
+
 
 export type CreateNewPoiResponse = z.infer<typeof CreateNewPoiResponseSchema>
 
