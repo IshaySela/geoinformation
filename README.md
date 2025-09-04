@@ -66,6 +66,7 @@ docker compose up
 - Rate limiting
 - API versioning
 - Testing
+- Increasing observability via logging, either to local or remote system (e.g. elasticsearch + logstash + kibana)
 
 ### Deployment
 - Apply migrations on backend container up (currently copying the app.db sqlite database with the existing tables)
