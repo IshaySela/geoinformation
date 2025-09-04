@@ -1,37 +1,38 @@
-# POI GeoInformation
+# 🗺️ POI GeoInformation
 
 A full-stack application to view Points of Interest (POI) in both **interactive map** and **tabular view**.
 
-## Features
+## ✨ Features
 
-- Interactive map with POI markers
-- Tabular view of POI data
-- Responsive UI with Tailwind
-- Backend provides CRUD operations for POIs
-- Configurable backend URL via environment variables
+- 🗺️ Interactive map with POI markers
+- 📊 Tabular view of POI data
+- 📱 Responsive UI with Tailwind and React
+- 🔧 Backend provides CRUD operations for POIs
+- ⚠️ Standardized machine readable error responses via the [Problem Details RFC](https://www.rfc-editor.org/rfc/rfc9457.html)
+- 🐳 Deployment using Docker Compose
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 **Frontend:**
-- React + Vite
-- Tailwind CSS
-- Leaflet (interactive map)
+- ⚛️ React + Vite
+- 🎨 Tailwind CSS
+- 🗺️ Leaflet (interactive map)
 
 **Backend:**
 - .NET Core Web API (.NET 9)
-- EF Core with SQLite database
-- RESTful endpoints for CRUD points of interest
+- 🗄️ EF Core with SQLite database
+- 🔄 RESTful endpoints for creating, deleting, updating and reading POIs
 
 **Deployment:**
-- Docker & Docker Compose
-- Frontend served via Nginx
-- Backend API exposed on port 5178
-- Frontend accessible on [http://localhost](http://localhost) (port 80)
-- Configuration via environment variables
+- 🐳 Docker & Docker Compose
+- 🌐 Frontend served via Nginx
+- 🔌 Backend API exposed on port 5178
+- 🖥️ Frontend accessible on [http://localhost](http://localhost) (port 80)
+- ⚙️ Configuration via environment variables
 
 ---
 
-## Quick Start Guide
+## 🚀 Quick Start Guide
 
 1. Requirements - [docker](https://docs.docker.com/engine/install/)
 
@@ -50,37 +51,40 @@ docker compose up
 
 4. Wait for the project to build and open browser on [http://localhost](http://localhost)
 
-## Future Improvments
 
-### Frontend
-- Better overall UI design (typography, spacing, color etc., better user experience)
-- Dark / Light mode - dark map, popups etc.
-- Error handling - covering more edge cases, adding retry policy for API calls
-- Caching with localStorage
-- Testing
+## 🎯 Future Improvments
+
+### 🎨 Frontend
+- 🖌️ Better overall UI design (typography, spacing, color etc., better user experience)
+- 🌙 Dark / Light mode - dark map, popups etc.
+- ⚠️ Error handling - covering more edge cases, adding retry policy for API calls
+- 💾 Caching with localStorage
+- 🧪 Unit tests for components (React Testing Library), integration tests for API calls, end-to-end tests for user flows
 
 ### Backend
-- Getting POIs relative to other point - get all POIs at radius from specific lat, long. This can be used as optimization,
+- 📍 Getting POIs relative to other point - get all POIs at radius from specific lat, long. This can be used as optimization,
   loading points at a radius from the current viewpoint.
-- Security - authentication, POI encryption
-- Rate limiting
-- API versioning
-- Testing
-- Increasing observability via logging, either to local or remote system (e.g. elasticsearch + logstash + kibana)
+- 🔒 Security - authentication, POI encryption
+- ⏱️ Rate limiting
+- 🗂️ API versioning
+- 🧪 Unit tests for POIs endpoint, integration tests with EF Core and in-memory DB, API contract tests, performance/load testing.
+- 📈 Increasing observability via logging, either to local or remote system (e.g. elasticsearch + logstash + kibana)
 
-### Deployment
-- Apply migrations on backend container up (currently copying the app.db sqlite database with the existing tables)
-- Add environment variables for configuring port
-- deploy with HTTPS by default
+ 
+### 🐳 Deployment
+- ⚡ Apply migrations on backend container up (currently copying the app.db SQLite database with the existing tables)
+ Apply migrations on backend container up (currently copying the app.db sqlite database with the existing tables)
+- 🔐 deploy with HTTPS with custom certificate
+- ♻️ Auto restart containers on fail
 
-## Known Bugs
-- POI marker accuracy drops as the map zoom increases
-- Create new POI form is slightly off center relative to the cursor marker
+## ⚠️ Known Issues
+- 📍 POI marker accuracy drops as the map zoom increases
+- 📝 Create new POI form is slightly off center relative to the cursor marker
 
-## Deployment Configuration
-### Backend Service
+## ⚙️ Deployment Configuration  - Environment Variables
+### 🔧 Backend Service
 - `POIS_FRONTEND_URL` - points to the origin of the front end. This is used by the backend to configure the CORS policy
-- `ConnectionStrings__DefaultConnection` - Connection string that is used by the backend (this is the path inside the container)
+- `ConnectionStrings__DefaultConnection` - Connection string that is used by the backend (path inside the container)
 
-  ### Frontend Service
+  ### 🌐 Frontend Service
 - `VITE_API_URL` - URL of the backend, used by the frontend to make API calls
